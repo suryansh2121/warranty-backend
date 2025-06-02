@@ -24,7 +24,7 @@ app.use(rateLimit({
     max: 100,
 }));
 app.use(cors({
-  origin: frontendUrl,
+  origin: process.env.FRONTEND_URL,
   credentials: true,
 }));
 
