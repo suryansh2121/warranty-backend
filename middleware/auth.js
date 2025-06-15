@@ -3,7 +3,7 @@ const {verifyToken} = require('../utils/jwt');
 const auth = (req, res, next) =>{
     const token = req.header('Authorization')?.replace('Bearer ', '');
     if(!token){
-        return res.satus(401).json({message: 'No token, authorization denied'});
+        return res.status(401).json({message: 'No token, authorization denied'});
     }
     try{
         const decoded = verifyToken(token);
