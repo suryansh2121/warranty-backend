@@ -1,6 +1,6 @@
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const User = require('../model/user');
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const User = require("../model/user");
 
 passport.use(
   new GoogleStrategy(
@@ -16,7 +16,7 @@ passport.use(
           user = await User.create({
             googleId: profile.id,
             email: profile.emails[0].value,
-            password: '',
+            password: "",
           });
         }
         return done(null, user);

@@ -7,7 +7,7 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const session = require('express-session');
 const passport = require('./config/passport');
-const { port, frontendUrl } = require('./config/env');
+const { port, frontendURL } = require('./config/env');
 const authRoutes = require('./routes/authRoute');
 const googleAuthRoutes = require('./routes/googleAuth');
 const warrantyRoutes = require('./routes/productRoute');
@@ -24,19 +24,14 @@ app.use(rateLimit({
     max: 100,
 }));
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: frontendURL,
   credentials: true,
 }));
 
 app.use(express.json());
 
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-}));
-app.use(passport.initialize());
-app.use(passport.session());
+
+
 
 connectDB();
 

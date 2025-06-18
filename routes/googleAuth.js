@@ -1,26 +1,11 @@
 const express = require('express');
 const { OAuth2Client } = require('google-auth-library');
-const passport = require('../config/passport');
 const { generateToken } = require('../utils/jwt');
-const { frontendURL } = require('../config/env');
-const User  = require('../model/user')
+const User = require('../model/user');
 
 const router = express.Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// 🔁 Old OAuth redirect flow
-router.get('/', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-router.get(
-  '/callback',
-  passport.authenticate('google', { session: false }),
-  (req, res) => {
-    const token = generateToken(req.user._id);
-    res.redirect(`${frontendURL}/?token=${token}`);
-  }
-);
-
-// ✅ New: Google One Tap / React Token Flow
 router.post('/', async (req, res) => {
   const { token } = req.body;
 
