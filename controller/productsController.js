@@ -11,9 +11,19 @@ exports.createWarranty = async (req, res, next) => {
       invoiceNumber,
       warrantyDuration,
       userEmail,
-      supportContactInfo,
       notes,
     } = req.body;
+
+    let supportContactInfo = {};
+    if (req.body.supportContactInfo) {
+      try {
+        supportContactInfo = JSON.parse(req.body.supportContactInfo);
+      } catch (err) {
+        return res
+          .status(400)
+          .json({ message: "Invalid support contact info format" });
+      }
+    }
 
     if (
       !productName ||
@@ -42,6 +52,7 @@ exports.createWarranty = async (req, res, next) => {
       warrantyDocs,
       userEmail,
       supportContactInfo,
+      notes,
       userId: req.user.id,
     });
 
@@ -54,22 +65,22 @@ exports.createWarranty = async (req, res, next) => {
     next(error);
   }
 };
+
 exports.getWarrantyById = async (req, res) => {
   try {
     const id = req.params.id;
     const warranty = await Warranty.findById(id);
 
     if (!warranty) {
-      return res.status(404).json({ message: 'Warranty not found' });
+      return res.status(404).json({ message: "Warranty not found" });
     }
 
     res.status(200).json(warranty);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
 };
-
 
 exports.getWarranties = async (req, res, next) => {
   try {
@@ -114,6 +125,16 @@ exports.updateWarranty = async (req, res, next) => {
       }
       warrantyDocs = req.file.path;
     }
+    let parsedSupportContactInfo = warranty.supportContactInfo;
+    if (req.body.supportContactInfo) {
+      try {
+        parsedSupportContactInfo = JSON.parse(req.body.supportContactInfo);
+      } catch (err) {
+        return res
+          .status(400)
+          .json({ message: "Invalid support contact info format" });
+      }
+    }
 
     warranty.productName = productName || warranty.productName;
     warranty.brandAndModel = brandAndModel || warranty.brandAndModel;
@@ -125,8 +146,8 @@ exports.updateWarranty = async (req, res, next) => {
         ? warrantyDuration
         : warranty.warrantyDuration;
     warranty.userEmail = userEmail || warranty.userEmail;
-    warranty.supportContactInfo =
-      supportContactInfo || warranty.supportContactInfo;
+    warranty.supportContactInfo = parsedSupportContactInfo;
+
     warranty.warrantyDocs = warrantyDocs;
 
     await warranty.save();
