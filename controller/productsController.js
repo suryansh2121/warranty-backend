@@ -1,7 +1,6 @@
 const Warranty = require("../model/product");
 const { cloudinary } = require("../config/cloudinary");
 
-
 exports.createWarranty = async (req, res, next) => {
   try {
     const {
@@ -13,10 +12,9 @@ exports.createWarranty = async (req, res, next) => {
       warrantyDuration,
       userEmail,
       supportContactInfo,
-      notes, 
+      notes,
     } = req.body;
 
- 
     if (
       !productName ||
       !brandAndModel ||
@@ -29,10 +27,9 @@ exports.createWarranty = async (req, res, next) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    
     let warrantyDocs = null;
     if (req.file) {
-      warrantyDocs = req.file.path; 
+      warrantyDocs = req.file.path;
     }
 
     const warranty = new Warranty({
@@ -46,14 +43,30 @@ exports.createWarranty = async (req, res, next) => {
       userEmail,
       supportContactInfo,
       userId: req.user.id,
-      
     });
 
     await warranty.save();
 
-    res.status(201).json({ message: "Warranty created successfully", warranty });
+    res
+      .status(201)
+      .json({ message: "Warranty created successfully", warranty });
   } catch (error) {
     next(error);
+  }
+};
+exports.getWarrantyById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const warranty = await Warranty.findById(id);
+
+    if (!warranty) {
+      return res.status(404).json({ message: 'Warranty not found' });
+    }
+
+    res.status(200).json(warranty);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -66,7 +79,6 @@ exports.getWarranties = async (req, res, next) => {
     next(error);
   }
 };
-
 
 exports.updateWarranty = async (req, res, next) => {
   try {
@@ -81,7 +93,7 @@ exports.updateWarranty = async (req, res, next) => {
       warrantyDuration,
       userEmail,
       supportContactInfo,
-      notes, 
+      notes,
     } = req.body;
 
     const warranty = await Warranty.findOne({ _id: id, userId: req.user.id });
@@ -90,11 +102,9 @@ exports.updateWarranty = async (req, res, next) => {
       return res.status(404).json({ message: "Warranty not found" });
     }
 
-    
     let warrantyDocs = warranty.warrantyDocs;
     if (req.file) {
       if (warranty.warrantyDocs) {
-        
         const publicId = warranty.warrantyDocs
           .split("/")
           .slice(-2)
@@ -105,18 +115,20 @@ exports.updateWarranty = async (req, res, next) => {
       warrantyDocs = req.file.path;
     }
 
-  
     warranty.productName = productName || warranty.productName;
     warranty.brandAndModel = brandAndModel || warranty.brandAndModel;
     warranty.serialNumber = serialNumber || warranty.serialNumber;
     warranty.purchaseDate = purchaseDate || warranty.purchaseDate;
     warranty.invoiceNumber = invoiceNumber || warranty.invoiceNumber;
     warranty.warrantyDuration =
-      warrantyDuration !== undefined ? warrantyDuration : warranty.warrantyDuration;
+      warrantyDuration !== undefined
+        ? warrantyDuration
+        : warranty.warrantyDuration;
     warranty.userEmail = userEmail || warranty.userEmail;
-    warranty.supportContactInfo = supportContactInfo || warranty.supportContactInfo;
+    warranty.supportContactInfo =
+      supportContactInfo || warranty.supportContactInfo;
     warranty.warrantyDocs = warrantyDocs;
-   
+
     await warranty.save();
 
     res.json({ message: "Warranty updated successfully", warranty });
@@ -125,11 +137,13 @@ exports.updateWarranty = async (req, res, next) => {
   }
 };
 
-
 exports.deleteWarranty = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const warranty = await Warranty.findOneAndDelete({ _id: id, userId: req.user.id });
+    const warranty = await Warranty.findOneAndDelete({
+      _id: id,
+      userId: req.user.id,
+    });
 
     if (!warranty) {
       return res.status(404).json({ message: "Warranty not found" });
@@ -150,12 +164,13 @@ exports.deleteWarranty = async (req, res, next) => {
   }
 };
 
-
 exports.searchWarranties = async (req, res, next) => {
   try {
     const { q } = req.query;
     if (!q || q.trim() === "") {
-      return res.status(400).json({ message: "Query parameter 'q' is required" });
+      return res
+        .status(400)
+        .json({ message: "Query parameter 'q' is required" });
     }
 
     const warranties = await Warranty.find({

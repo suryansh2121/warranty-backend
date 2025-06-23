@@ -9,5 +9,7 @@ router.get('/', auth, warrantyController.getWarranties);
 router.put('/:id', auth, upload.single('warrantyDocument'), warrantyController.updateWarranty);
 router.delete('/:id', auth, warrantyController.deleteWarranty);
 router.get('/search', auth, warrantyController.searchWarranties);
+router.get('/:id', auth, warrantyController.getWarrantyById);
+
 
 module.exports = router;
