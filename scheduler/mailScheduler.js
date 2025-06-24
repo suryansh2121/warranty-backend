@@ -3,7 +3,7 @@ const transporter = require("../config/nodemailer");
 const Warranty = require("../model/product");
 
 const scheduleReminders = () => {
-  cron.schedule("* * * * *", async () => {
+  cron.schedule("0 0 1 */3 * *", async () => {
     console.log("Running warranty reminder job...");
 
     const now = new Date();
