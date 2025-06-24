@@ -11,7 +11,6 @@ exports.createWarranty = async (req, res, next) => {
       invoiceNumber,
       warrantyDuration,
       userEmail,
-      notes,
     } = req.body;
 
     let supportContactInfo = {};
@@ -52,7 +51,6 @@ exports.createWarranty = async (req, res, next) => {
       warrantyDocs,
       userEmail,
       supportContactInfo,
-      notes,
       userId: req.user.id,
     });
 
@@ -104,7 +102,6 @@ exports.updateWarranty = async (req, res, next) => {
       warrantyDuration,
       userEmail,
       supportContactInfo,
-      notes,
     } = req.body;
 
     const warranty = await Warranty.findOne({ _id: id, userId: req.user.id });

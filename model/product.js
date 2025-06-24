@@ -109,6 +109,11 @@ const warrantySchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    lastReminderSent: {
+      type: Date,
+      default: null,
+    },
+
     updatedAt: {
       type: Date,
       default: Date.now,
