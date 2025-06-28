@@ -11,6 +11,8 @@ const warrantyRoutes = require("./routes/productRoute");
 const { scheduleReminders } = require("./scheduler/mailScheduler");
 const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorHandler");
+const forgotpassword = require("./routes/forgot-password")
+const resetpassword = require("./routes/reset-password")
 
 const app = express();
 
@@ -36,6 +38,8 @@ connectDB();
 app.use("/api/auth", authRoutes);
 app.use("/api/auth/google", googleAuthRoutes);
 app.use("/api/warranty", warrantyRoutes);
+app.use("api/auth/forgot-password", forgotpassword)
+app.use("api/auth/reset-password", resetpassword)
 
 app.use(errorHandler);
 
