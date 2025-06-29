@@ -1,17 +1,29 @@
-const router = require("./authRoute");
-const User = require('../model/user');
+const User = require("../model/user");
 
-router.post('/reset-password/:token', async(req , res)=>{
+const ResetPassword = async (req, res) => {
+  try {
+    const { password } = req.body;           
+    const { token } = req.params;            
+
     const user = await User.findOne({
-        resetToken: req.param.token,
-        resetTokenExpiry: {$gt:Date.now()},
+      resetToken: token,
+      resetTokenExpiry: { $gt: Date.now() },
     });
-    if(!user) return res.status(400).json ({message: "Invalid or expired token"});
-    user.password = await bcrypt.hash(req.body.password, 12);
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+
+    user.password = await bcrypt.hash(password, 12);
     user.resetToken = undefined;
     user.resetTokenExpiry = undefined;
     await user.save();
 
-    res.json({message: "Password has been reset."})
-})
-module.exports  = router
+    res.json({ message: "Password has been reset." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
+module.exports = ResetPassword;
