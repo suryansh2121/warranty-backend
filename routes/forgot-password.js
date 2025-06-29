@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const User = require("../model/user");
 const { sendResetEmail } = require("../scheduler/sendResetEmail");
-const { frontendURL } = require("./config/env");
+const { frontendURL } = require("../config/env");
 
 const ForgotPassword = async (req, res) => {
   try {
